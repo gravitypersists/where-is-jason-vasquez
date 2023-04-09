@@ -1,0 +1,12 @@
+{
+  "How long have you worked here for?": ["history"],
+  "Have you noticed any suspicious activity?": ["suspicious"],
+  "Anything weird going on around here?": ["suspicious"],
+  "What happened with the backdoor?": ["backdoor"],
+  "Sombody broke in?": ["backdoor"],
+  "Tell me more about the basement": ["backdoor", "basement"],
+  "What's in the basement?": ["basement"],
+  "Can I go check out the basement?": ["no access to basement"],
+  "I would like to go into the basement": ["no access to basement"],
+  "How do I get into the alley?": ["alley", "access to alley"]
+}
