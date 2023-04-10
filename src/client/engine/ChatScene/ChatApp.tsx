@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 import styled from "styled-components";
 import { take, sortBy } from "lodash";
+import Button from "../../ui/Button";
 
 const Container = styled.div`
-  width: 500px;
-  margin: 0 auto;
   padding: 20px;
+  font-family: "VT323", monospace;
 `;
 
 const MessageList = styled.ul`
@@ -27,42 +27,44 @@ const MessageItem = styled.li<{ isOwn: boolean }>`
 
 const MessageBubble = styled.div<{ isOwn: boolean }>`
   padding: 10px;
-  border-radius: 10px;
-  background-color: ${({ isOwn }) => (isOwn ? "#C9F1FF" : "#F0F0F0")}; ;
+  color: ${({ isOwn }) => (isOwn ? "#e9e9e9;" : "#fcffc4")};
+  text-align: ${({ isOwn }) => (isOwn ? "right" : "left")};
+  box-shadow: rgba(0, 0, 0, 0.5) -2px 2px 2px 0px;
+  background-color: ${({ isOwn }) =>
+    isOwn ? "rgb(14 50 63 / 93%)" : "rgb(34 22 20 / 93%)"}; ;
 `;
 
-const InputContainer = styled.div`
+const ActionsContainer = styled.div`
   display: flex;
   margin-top: 20px;
 `;
 
-const InputField = styled.input`
+const InputContainer = styled.div`
+  position: relative;
   flex: 1;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: none;
-  outline: none;
 `;
 
-const Button = styled.button`
-  background-color: #007aff;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 5px;
+const InputField = styled.input`
+  font-family: "VT323", monospace;
+  padding: 10px;
+  padding-right: 40px;
   font-size: 16px;
-  margin-left: 10px;
   border: none;
-  cursor: pointer;
   outline: none;
+  background-color: rgb(0 0 0 / 80%);
+  color: #e9e9e9;
+  width: 100%;
+  box-sizing: border-box;
+`;
 
-  &:hover {
-    background-color: #0060d6;
-  }
+const SendButton = styled(Button)`
+  position: absolute;
+  right: 0;
 `;
 
 const ResetButton = styled(Button)`
-  background-color: #e91e63;
+  background-color: rgb(51 45 45);
+  color: #f66f6f;
   &:hover {
     background-color: #b3003c;
   }
@@ -77,10 +79,22 @@ const messageMerger =
     return sortBy(newList, "ts");
   };
 
+const defaultMsgs = [
+  { text: "My son is missing. Please help me find him.", isOwn: false, ts: 0 },
+  //   { text: "Hi!", isOwn: true, ts: 2 },
+  //   { text: "How are you?", isOwn: false, ts: 3 },
+  //   { text: "I'm working here.", isOwn: true, ts: 4 },
+  //   {
+  //     text: "I can see that. Can I request your services.",
+  //     isOwn: false,
+  //     ts: 5,
+  //   },
+];
+
 const ChatApp = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [message, setMessage] = useState<string>("");
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(defaultMsgs);
 
   useEffect(() => {
     const socket = io("http://localhost:3030");
@@ -129,23 +143,30 @@ const ChatApp = () => {
     <Container>
       <MessageList>
         {[...messages].reverse().map((msg, index) => (
-          <MessageItem key={msg.text} isOwn={msg.isOwn}>
+          <MessageItem key={msg.ts} isOwn={msg.isOwn}>
             <MessageBubble isOwn={msg.isOwn}>{msg.text}</MessageBubble>
           </MessageItem>
         ))}
       </MessageList>
-      <InputContainer>
-        <InputField
-          autoFocus
-          type="text"
-          placeholder="Type your message here"
-          value={message}
-          onChange={(e) => setMessage(take(e.target.value, 60).join(""))}
-          onKeyDown={handleKeyDown}
-        />
-        <Button onClick={handleSendMessage}>Send</Button>
-        <ResetButton onClick={handleReset}>Reset</ResetButton>
-      </InputContainer>
+      <ActionsContainer>
+        <InputContainer>
+          <InputField
+            autoFocus
+            type="text"
+            placeholder="Type your message here"
+            value={message}
+            onChange={(e) => setMessage(take(e.target.value, 60).join(""))}
+            onKeyDown={handleKeyDown}
+          />
+          <SendButton
+            onClick={handleSendMessage}
+            disabled={message.length === 0}
+          >
+            ↵
+          </SendButton>
+        </InputContainer>
+        <ResetButton onClick={handleReset}>x</ResetButton>
+      </ActionsContainer>
     </Container>
   );
 };

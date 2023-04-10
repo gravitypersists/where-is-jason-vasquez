@@ -54,7 +54,8 @@ class OpenApiChatCompletions {
       model: "gpt-3.5-turbo",
       messages: request.messages,
       max_tokens: request.max_tokens || 100,
-      temperature: request.temperature || 0.5,
+      temperature: request.temperature || 0.2,
+      presence_penalty: -2,
       n: request.n || 1,
     };
 
