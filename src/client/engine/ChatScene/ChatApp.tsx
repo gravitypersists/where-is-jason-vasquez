@@ -66,6 +66,9 @@ const SendButton = styled(Button)`
 
 const ResetButton = styled(Button)`
   background-color: rgb(51 45 45);
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
   color: #f66f6f;
   &:hover {
     background-color: #b3003c;
@@ -93,11 +96,30 @@ const defaultMsgs = [
   //   },
 ];
 
+const MessageLoading = () => {
+  const [msg, setMsg] = useState<string>(".");
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMsg((prev) => {
+        if (prev.length === 3) return ".";
+        return prev + ".";
+      });
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
+  return (
+    <MessageItem key="loading" isOwn={false}>
+      <MessageBubble isOwn={false}>{msg}</MessageBubble>
+    </MessageItem>
+  );
+};
+
 const ChatApp = () => {
   const { scene } = useGameState();
   const botName = (scene as ChatSceneConfig).config.bot;
   const [socket, setSocket] = useState<Socket | null>(null);
   const [message, setMessage] = useState<string>("");
+  const [awaitingResponse, setAwaitingResponse] = useState<boolean>(false);
   const [messages, setMessages] = useState<Message[]>(
     (scene as ChatSceneConfig).config.preload
   );
@@ -120,12 +142,12 @@ const ChatApp = () => {
       socket.on(
         `emit:${botName}:message`,
         ({ message, ts }: { message: string; ts: number }) => {
-          console.log("received message: ", message);
+          setAwaitingResponse(false);
           setMessages(messageMerger(message, ts, false));
         }
       );
     }
-  }, [socket]);
+  }, [socket, setAwaitingResponse, setMessages]);
 
   const handleSendMessage = () => {
     if (message === "") return;
@@ -134,6 +156,7 @@ const ChatApp = () => {
       console.log("sending message: ", { message, ts });
       socket.emit(`send:${botName}:message`, { message, ts });
       setMessages(messageMerger(message, ts, true));
+      setAwaitingResponse(true);
       setMessage("");
     }
   };
@@ -152,31 +175,35 @@ const ChatApp = () => {
   return (
     <Container>
       <MessageList>
+        {awaitingResponse && <MessageLoading />}
         {[...messages].reverse().map((msg, index) => (
           <MessageItem key={msg.ts} isOwn={msg.isOwn}>
             <MessageBubble isOwn={msg.isOwn}>{msg.text}</MessageBubble>
           </MessageItem>
         ))}
       </MessageList>
-      <ActionsContainer>
-        <InputContainer>
-          <InputField
-            autoFocus
-            type="text"
-            placeholder="Type your message here"
-            value={message}
-            onChange={(e) => setMessage(take(e.target.value, 60).join(""))}
-            onKeyDown={handleKeyDown}
-          />
-          <SendButton
-            onClick={handleSendMessage}
-            disabled={message.length === 0}
-          >
-            ↵
-          </SendButton>
-        </InputContainer>
-        <ResetButton onClick={handleReset}>x</ResetButton>
-      </ActionsContainer>
+      {!awaitingResponse && (
+        <ActionsContainer>
+          <InputContainer>
+            <InputField
+              autoFocus
+              type="text"
+              placeholder="Type your message here"
+              value={message}
+              onChange={(e) => setMessage(take(e.target.value, 60).join(""))}
+              onKeyDown={handleKeyDown}
+              disabled={awaitingResponse}
+            />
+            <SendButton
+              onClick={handleSendMessage}
+              disabled={message.length === 0}
+            >
+              ↵
+            </SendButton>
+          </InputContainer>
+        </ActionsContainer>
+      )}
+      <ResetButton onClick={handleReset}>x</ResetButton>
     </Container>
   );
 };
