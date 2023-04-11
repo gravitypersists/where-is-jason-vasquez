@@ -8,6 +8,7 @@ export type GameState = {
 
 const defaultState: GameState = {
   scene: "start",
+  //   scene: "world",
 };
 
 type GameContext = {

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
-import { useGameState } from "../../State";
 import Background from "../Scene/Background";
 import neonBlues from "../../assets/scenes/pi.png";
 import poster from "../../assets/scenes/poster.png";
@@ -22,13 +21,12 @@ const photos: Photo[] = [
 
 const texts = [
   "A game by Michael Silveira",
-  "With our collective unconscious in OpenAI",
-  "Art by Midjourney",
+  "Powered by our collective unconscious, ChatGPT",
+  "Art stolen and remixed by Midjourney",
   "Where is Jason Vasquez?",
 ];
 
-const Title = () => {
-  const { setScene } = useGameState();
+const Title = ({ onDone }: { onDone: () => void }) => {
   const [i, setI] = useState(0);
   const [showText, setShowText] = useState(true);
 
@@ -47,7 +45,7 @@ const Title = () => {
 
   useEffect(() => {
     if (i === photos.length) {
-      setScene("bartender");
+      setTimeout(() => onDone(), 3000);
     }
   }, [i]);
 
@@ -88,7 +86,7 @@ const StyledText = styled(motion.h1)`
   position: absolute;
   top: 20px;
   left: 20px;
-  width: 100px;
+  width: 40px;
   color: white;
   font-size: 1.5rem;
   font-weight: bold;

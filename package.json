@@ -9,7 +9,8 @@
     "embed": "ts-node --project tsconfig.node.json --esm src/scripts/buildEmbeddings.ts",
     "populate": "ts-node --project tsconfig.node.json --esm src/scripts/populateIndexNamespace.ts",
     "testq": "ts-node --project tsconfig.node.json --esm src/npcs/Bartender/testQueries.ts",
-    "serve": "ts-node --project tsconfig.node.json --esm ./src/server/app.ts"
+    "serve": "ts-node --project tsconfig.node.json --esm ./src/server/app.ts",
+    "zip": "git archive --format=zip --output /Users/michaelsilveira/Desktop/whisper.zip master"
   },
   "dependencies": {
     "@pinecone-database/pinecone": "^0.0.12",

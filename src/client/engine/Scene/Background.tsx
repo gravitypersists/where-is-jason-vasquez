@@ -30,14 +30,16 @@ const Background = ({
   children,
   src,
   fadeIn = 2,
+  opacity = 1,
 }: {
   children: React.ReactNode;
   src: string;
   fadeIn?: number;
+  opacity?: number;
 }) => {
   const commonProps = {
     initial: { opacity: 0 },
-    animate: { opacity: 1 },
+    animate: { opacity },
     exit: { opacity: 0 },
     transition: { duration: fadeIn },
   };
