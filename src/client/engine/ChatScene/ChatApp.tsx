@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 import styled from "styled-components";
 import { take, sortBy } from "lodash";
+import { useGameState } from "../../State";
 import Button from "../../ui/Button";
+import { ChatSceneConfig } from "../../scenes";
 
 const Container = styled.div`
   padding: 20px;
@@ -92,12 +94,20 @@ const defaultMsgs = [
 ];
 
 const ChatApp = () => {
+  const { scene } = useGameState();
+  const botName = (scene as ChatSceneConfig).config.bot;
   const [socket, setSocket] = useState<Socket | null>(null);
   const [message, setMessage] = useState<string>("");
-  const [messages, setMessages] = useState<Message[]>(defaultMsgs);
+  const [messages, setMessages] = useState<Message[]>(
+    (scene as ChatSceneConfig).config.preload
+  );
 
   useEffect(() => {
-    const socket = io("http://localhost:3030");
+    const socket = io("http://localhost:3030", {
+      query: {
+        botName,
+      },
+    });
     setSocket(socket);
 
     return () => {
@@ -108,7 +118,7 @@ const ChatApp = () => {
   useEffect(() => {
     if (socket) {
       socket.on(
-        "emit:bartender:message",
+        `emit:${botName}:message`,
         ({ message, ts }: { message: string; ts: number }) => {
           console.log("received message: ", message);
           setMessages(messageMerger(message, ts, false));
@@ -122,14 +132,14 @@ const ChatApp = () => {
     if (socket) {
       const ts = Date.now();
       console.log("sending message: ", { message, ts });
-      socket.emit("send:bartender:message", { message, ts });
+      socket.emit(`send:${botName}:message`, { message, ts });
       setMessages(messageMerger(message, ts, true));
       setMessage("");
     }
   };
 
   const handleReset = () => {
-    socket?.emit("reset:bartender");
+    socket?.emit(`reset:${botName}`);
     setMessages([]);
   };
 

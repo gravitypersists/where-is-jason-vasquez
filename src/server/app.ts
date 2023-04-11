@@ -9,19 +9,25 @@ const io = new Server({
   },
 });
 
+const botPaths = {
+  mother: "../npcs/Mother",
+  bartender: "../npcs/Bartender",
+};
+
 io.on("connection", (socket: Socket) => {
-  console.log(`User ${socket.id} connected`);
+  const botName = socket.handshake.query.botName as keyof typeof botPaths;
+  console.log(`User ${socket.id} connected to ${botName}`);
   const { id } = socket;
-  const bartender = new LoadableNpc(path.join(__dirname, "../npcs/Mother"));
+  const bot = new LoadableNpc(path.join(__dirname, botPaths[botName]));
 
   socket.on(
-    "send:bartender:message",
+    `send:${botName}:message`,
     ({ message, ts }: { message: string; ts: number }) => {
       console.log(`Received message: ${message}`);
       if (!message || message === "") throw new Error("Bad message");
-      bartender.respond(message).then((response) => {
+      bot.respond(message).then((response) => {
         console.log("emitting bot message: ", response);
-        io.emit("emit:bartender:message", {
+        io.emit(`emit:${botName}:message`, {
           message: response,
           ts: Date.now(),
         });
@@ -29,8 +35,8 @@ io.on("connection", (socket: Socket) => {
     }
   );
 
-  socket.on("reset:bartender", () => {
-    bartender.reset();
+  socket.on(`reset:${botName}`, () => {
+    bot.reset();
   });
 
   socket.on("disconnect", () => {

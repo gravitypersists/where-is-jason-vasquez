@@ -21,5 +21,10 @@
     "jason's home"
   ],
   "Did you try to get into Jason's house?": ["jason's home"],
-  "Does Jason have any friends of family?": ["jason's friends"]
+  "Does Jason have any friends of family?": ["jason's friends"],
+  "What makes you think anything is wrong with him?": [
+    "history",
+    "jason's home"
+  ],
+  "Does Jason have any distinguishing features": ["jason's description"]
 }

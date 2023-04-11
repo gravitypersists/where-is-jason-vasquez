@@ -1,9 +1,10 @@
 import OpenApiChatCompletions from "./ChatCompletions";
 import OpenApiEmbeddings from "./Embeddings";
 import { getIndex } from "./Indexes";
-import { takeRight, get } from "lodash";
+import { takeRight, get, uniq } from "lodash";
 
 const REMEMBER = 2;
+const CONTEXT_THRESHOLD = 0.82;
 
 interface Mode {
   name: string;
@@ -48,18 +49,26 @@ class Npc {
     const embedResponse = await OpenApiEmbeddings.getEmbedding(message);
     const queryResponse: any = await index.query({
       queryRequest: {
-        topK: 1,
+        topK: 3,
         includeMetadata: true,
         vector: embedResponse.data[0].embedding,
         namespace: this.name,
       },
     });
-    console.log(
-      "Matched prompt: ",
-      queryResponse.matches[0].metadata.prompt,
-      queryResponse.matches[0].metadata.facts
+    const facts: string[] = uniq(
+      queryResponse.matches.map((match: any, i: number) => {
+        console.log(
+          "Matched prompt: ",
+          match.metadata.prompt,
+          match.metadata.facts,
+          match.score
+        );
+        return i === 0 || match.score < CONTEXT_THRESHOLD
+          ? []
+          : match.metadata.facts;
+      })
     );
-    const facts: string[] = queryResponse.matches[0].metadata.facts;
+
     return facts.map((fact) => get(this.facts, fact)).join(" ");
   }
 

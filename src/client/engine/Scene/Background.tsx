@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { motion, AnimatePresence } from "framer-motion";
 import filomena from "../../assets/scenes/filomena.png";
 
 const Container = styled.div`
@@ -9,12 +10,12 @@ const Container = styled.div`
   position: relative;
 `;
 
-const Img = styled.img`
+const Img = styled(motion.img)`
   width: 468px;
   height: 468px;
   position: relative;
 `;
-const GlowImg = styled.div<{ src: string }>`
+const GlowImg = styled(motion.div)<{ src: string }>`
   width: 468px;
   height: 468px;
   background-repeat: no-repeat;
@@ -25,11 +26,25 @@ const GlowImg = styled.div<{ src: string }>`
   top: 0;
 `;
 
-const Background = ({ children }: { children: React.ReactNode }) => {
+const Background = ({
+  children,
+  src,
+  fadeIn = 2,
+}: {
+  children: React.ReactNode;
+  src: string;
+  fadeIn?: number;
+}) => {
+  const commonProps = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+    transition: { duration: fadeIn },
+  };
   return (
     <Container>
-      <GlowImg src={filomena} />
-      <Img src={filomena} />
+      <GlowImg src={src} key={`bg-${src}`} {...commonProps} />
+      <Img key={src} src={src} {...commonProps} />
       {children}
     </Container>
   );
