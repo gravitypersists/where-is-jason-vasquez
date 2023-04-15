@@ -5,6 +5,7 @@ import bartender from "./assets/scenes/bartender.png";
 import pi from "./assets/scenes/pi.png";
 import payphone from "./assets/scenes/payphone.png";
 import receptionist from "./assets/scenes/receptionist.png";
+import policedesk from "./assets/scenes/police-desk.png";
 
 export type ChatSceneConfig = {
   app: "chat";
@@ -37,6 +38,34 @@ export type SceneConfig = {
 };
 
 const scenes: SceneConfig = {
+  world: {
+    app: "options",
+    config: {
+      bg: pi,
+      options: [
+        { goto: "receptionist", label: "Check into your motel" },
+        { goto: "policedesk", label: "Go to the local police station" },
+        { goto: "bartender", label: "Go to the bar" },
+        { goto: "payphone", label: "Go find a payphone" },
+      ],
+    },
+  },
+  payphone: {
+    app: "options",
+    config: {
+      bg: payphone,
+      options: [
+        {
+          goto: "phonefilomena",
+          label: "Call Jason's mother, Filomena Vasquez",
+        },
+        {
+          goto: "world",
+          label: "Leave",
+        },
+      ],
+    },
+  },
   start: {
     app: "chat",
     config: {
@@ -117,38 +146,31 @@ const scenes: SceneConfig = {
       ],
     },
   },
+  policedesk: {
+    app: "chat",
+    config: {
+      bot: "policedesk",
+      bg: policedesk,
+      preload: [
+        {
+          text: "Can I help you with something?",
+          isOwn: false,
+          ts: 0,
+        },
+      ],
+      actions: [
+        {
+          do: set("scene", "world"),
+          label: "Leave ⟶",
+        },
+      ],
+    },
+  },
   title: {
     app: "cutscene",
     config: {
       component: "title",
       next: "world",
-    },
-  },
-  world: {
-    app: "options",
-    config: {
-      bg: pi,
-      options: [
-        { goto: "receptionist", label: "Check into your motel" },
-        { goto: "bartender", label: "Go to the bar" },
-        { goto: "payphone", label: "Go to the payphone" },
-      ],
-    },
-  },
-  payphone: {
-    app: "options",
-    config: {
-      bg: payphone,
-      options: [
-        {
-          goto: "phonefilomena",
-          label: "Call Jason's mother, Filomena Vasquez",
-        },
-        {
-          goto: "world",
-          label: "Leave",
-        },
-      ],
     },
   },
 };

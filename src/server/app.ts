@@ -12,13 +12,23 @@ const io = new Server({
 const botPaths = {
   mother: "../npcs/Mother",
   bartender: "../npcs/Bartender",
+  policedesk: "../npcs/PoliceDesk",
 };
 
 io.on("connection", (socket: Socket) => {
   const botName = socket.handshake.query.botName as keyof typeof botPaths;
+  if (botPaths[botName] === undefined) return;
+  const preload = socket.handshake.query.preload as string;
+  const botState = JSON.parse(
+    socket.handshake.query.botState as string
+  ) as string[];
   console.log(`User ${socket.id} connected to ${botName}`);
   const { id } = socket;
-  const bot = new LoadableNpc(path.join(__dirname, botPaths[botName]));
+  const bot = new LoadableNpc({
+    dir: path.join(__dirname, botPaths[botName]),
+    preload,
+  });
+  bot.setModes(botState);
 
   socket.on(
     `send:${botName}:message`,
@@ -30,6 +40,7 @@ io.on("connection", (socket: Socket) => {
         io.emit(`emit:${botName}:message`, {
           message: response,
           ts: Date.now(),
+          botState: bot.getModes(),
         });
       });
     }

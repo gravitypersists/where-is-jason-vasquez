@@ -1,0 +1,23 @@
+{
+  "I am a private investigator": [
+    {
+      "modeSwitch": ["learnsPI"]
+    }
+  ],
+  "I'm looking for Jason Vasquez": ["jason"],
+  "even for a private investigator?": [
+    {
+      "modeSwitch": ["learnsPI"]
+    }
+  ],
+  "How is crime around here?": ["crime"],
+  "Have there been any murders?": ["crime"],
+  "What's the worst thing that's happened around here?": ["crime"],
+  "Who do you think broke into the bar's basement?": [
+    "basement",
+    "brokenmirror"
+  ],
+  "Any crimes with the Broken Mirror?": ["basement", "brokenmirror"],
+  "What's the deal with the Broken Mirror?": ["brokenmirror"],
+  "Has Vega Cruz been in trouble?": ["brokenmirror"]
+}

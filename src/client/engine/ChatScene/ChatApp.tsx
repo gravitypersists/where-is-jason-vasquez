@@ -84,18 +84,6 @@ const messageMerger =
     return sortBy(newList, "ts");
   };
 
-const defaultMsgs = [
-  { text: "My son is missing. Please help me find him.", isOwn: false, ts: 0 },
-  //   { text: "Hi!", isOwn: true, ts: 2 },
-  //   { text: "How are you?", isOwn: false, ts: 3 },
-  //   { text: "I'm working here.", isOwn: true, ts: 4 },
-  //   {
-  //     text: "I can see that. Can I request your services.",
-  //     isOwn: false,
-  //     ts: 5,
-  //   },
-];
-
 const MessageLoading = () => {
   const [msg, setMsg] = useState<string>(".");
   useEffect(() => {
@@ -115,7 +103,7 @@ const MessageLoading = () => {
 };
 
 const ChatApp = () => {
-  const { scene } = useGameState();
+  const { scene, state } = useGameState();
   const botName = (scene as ChatSceneConfig).config.bot;
   const [socket, setSocket] = useState<Socket | null>(null);
   const [message, setMessage] = useState<string>("");
@@ -128,6 +116,8 @@ const ChatApp = () => {
     const socket = io("http://localhost:3030", {
       query: {
         botName,
+        preload: (scene as ChatSceneConfig).config.preload.map((x) => x.text),
+        botState: JSON.stringify(state.botStates[botName] || []),
       },
     });
     setSocket(socket);

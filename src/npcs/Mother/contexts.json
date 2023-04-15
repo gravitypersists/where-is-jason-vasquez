@@ -1,4 +1,5 @@
 {
+  "Hello": ["history"],
   "When is the last time you've seen Jason?": ["history"],
   "When did you talk to Jason?": ["history"],
   "Have you noticed any suspicious activity?": ["suspicious"],

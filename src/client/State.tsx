@@ -4,11 +4,18 @@ import scenes from "./scenes";
 
 export type GameState = {
   scene: keyof typeof scenes;
+  botStates: {
+    [bot: string]: string[];
+  };
 };
 
 const defaultState: GameState = {
-  scene: "start",
-  //   scene: "world",
+  // scene: "start",
+  scene: "world",
+  botStates: {
+    policedesk: ["disdain"],
+    mother: ["intro"],
+  },
 };
 
 type GameContext = {

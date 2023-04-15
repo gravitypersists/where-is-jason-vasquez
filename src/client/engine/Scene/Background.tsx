@@ -45,7 +45,12 @@ const Background = ({
   };
   return (
     <Container>
-      <GlowImg src={src} key={`bg-${src}`} {...commonProps} />
+      <GlowImg
+        src={src}
+        key={`bg-${src}`}
+        {...commonProps}
+        transition={{ ...commonProps.transition, delay: 0.3 }}
+      />
       <Img key={src} src={src} {...commonProps} />
       {children}
     </Container>

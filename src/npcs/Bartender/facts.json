@@ -10,5 +10,6 @@
   "smuggler": "Vega's father was a smuggler of alcohol and he grew up around the business, which has led him to have some questionable connections.",
   "father": "Vega's father was also a bartender back East. He spent him time in and out of trouble with the law for smuggling.",
   "border": "Vega may or may not know how to get things across the border but he doesn't trust you yet so he won't tell you what you'd like to know about it",
-  "police": "Vega is a little paranoid about the police. He suspects they are snooping around the bar and he's not sure why."
+  "police": "Vega is a little paranoid about the police. He suspects they are snooping around the bar and he's not sure why. He has not alerted them to the break-in, and he should not tell you why.",
+  "manager": "Vega is not the owner of the bar. The owner is away on a trip and won't be back for several weeks."
 }

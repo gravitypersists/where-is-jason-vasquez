@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 class Bartender extends Npc {
-  constructor(dir: string) {
+  constructor({ dir, preload }: { dir: string; preload: string }) {
     const facts = JSON.parse(
       fs.readFileSync(path.join(dir, "./facts.json"), "utf8")
     );
@@ -15,7 +15,14 @@ class Bartender extends Npc {
       fs.readFileSync(path.join(dir, "./details.json"), "utf8")
     );
 
-    super({ facts, name: details.name, baseSystem: details.baseSystem });
+    super({
+      facts,
+      name: details.name,
+      baseSystem: details.baseSystem,
+      switches: details.switches,
+      modePrompts: details.modes,
+      preload,
+    });
   }
 }
 

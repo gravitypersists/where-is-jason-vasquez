@@ -5,8 +5,11 @@
   "What happened with the backdoor?": ["backdoor"],
   "Sombody broke in?": ["backdoor"],
   "Tell me more about the basement": ["backdoor", "basement"],
+  "Have you alerted the police?": ["police"],
   "What's in the basement?": ["basement"],
   "Can I go check out the basement?": ["no access to basement"],
   "I would like to go into the basement": ["no access to basement"],
-  "How do I get into the alley?": ["alley", "access to alley"]
+  "How do I get into the alley?": ["alley", "access to alley"],
+  "Are you the owner of the bar?": ["manager"],
+  "Can I speak to your manager?": ["manager"]
 }
