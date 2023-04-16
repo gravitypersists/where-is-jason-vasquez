@@ -14,5 +14,6 @@
   },
   "actions": {
     "frank": {}
-  }
+  },
+  "permanentFacts": ["jason"]
 }

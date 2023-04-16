@@ -32,7 +32,6 @@ const Title = ({ onDone }: { onDone: () => void }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      console.log(i);
       setI((prevIndex) => prevIndex + 1);
     }, 5000);
 

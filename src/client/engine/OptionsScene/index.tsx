@@ -24,10 +24,13 @@ export default function OptionsScene() {
       <Container>
         <h1>Options</h1>
         <div>
-          {chunks.map((chonk) => (
-            <div>
+          {chunks.map((chonk, i) => (
+            <div key={i}>
               {chonk.map((option) => (
-                <Button onClick={() => setScene(option.goto)}>
+                <Button
+                  onClick={() => setScene(option.goto)}
+                  key={option.label}
+                >
                   {option.label}
                 </Button>
               ))}

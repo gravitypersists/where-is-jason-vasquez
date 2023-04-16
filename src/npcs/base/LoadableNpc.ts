@@ -1,9 +1,15 @@
-import Npc from "./Npc";
+import Npc, { NpcOptions } from "./Npc";
 import fs from "fs";
 import path from "path";
 
 class Bartender extends Npc {
-  constructor({ dir, preload }: { dir: string; preload: string }) {
+  constructor({
+    dir,
+    ...rest
+  }: { dir: string } & Omit<
+    NpcOptions,
+    "name" | "baseSystem" | "facts" | "switches" | "modePrompts"
+  >) {
     const facts = JSON.parse(
       fs.readFileSync(path.join(dir, "./facts.json"), "utf8")
     );
@@ -16,12 +22,13 @@ class Bartender extends Npc {
     );
 
     super({
+      ...rest,
       facts,
       name: details.name,
       baseSystem: details.baseSystem,
       switches: details.switches,
       modePrompts: details.modes,
-      preload,
+      permanentFacts: details.permanentFacts,
     });
   }
 }

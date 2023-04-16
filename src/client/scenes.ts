@@ -6,6 +6,14 @@ import pi from "./assets/scenes/pi.png";
 import payphone from "./assets/scenes/payphone.png";
 import receptionist from "./assets/scenes/receptionist.png";
 import policedesk from "./assets/scenes/police-desk.png";
+import detective from "./assets/scenes/detective.png";
+
+export type SceneAction = {
+  id: string;
+  locked?: boolean;
+  do: (state: GameState) => GameState;
+  label: string;
+};
 
 export type ChatSceneConfig = {
   app: "chat";
@@ -13,7 +21,7 @@ export type ChatSceneConfig = {
     bot: string;
     bg: string;
     preload: { text: string; isOwn: boolean; ts: number }[];
-    actions: { do: (state: GameState) => GameState; label: string }[];
+    actions: SceneAction[];
   };
 };
 
@@ -33,8 +41,10 @@ export type OptionsSceneConfig = {
   };
 };
 
+export type Scene = ChatSceneConfig | CutSceneConfig | OptionsSceneConfig;
+
 export type SceneConfig = {
-  [key: string]: ChatSceneConfig | CutSceneConfig | OptionsSceneConfig;
+  [key: string]: Scene;
 };
 
 const scenes: SceneConfig = {
@@ -80,6 +90,7 @@ const scenes: SceneConfig = {
       ],
       actions: [
         {
+          id: "accept",
           do: (state: GameState) => set("scene", "title", state),
           label: "Accept the case ⟶",
         },
@@ -100,6 +111,7 @@ const scenes: SceneConfig = {
       ],
       actions: [
         {
+          id: "leave",
           do: set("scene", "world"),
           label: "Leave ⟶",
         },
@@ -120,6 +132,7 @@ const scenes: SceneConfig = {
       ],
       actions: [
         {
+          id: "leave",
           do: set("scene", "world"),
           label: "Hang up ⟶",
         },
@@ -140,6 +153,7 @@ const scenes: SceneConfig = {
       ],
       actions: [
         {
+          id: "leave",
           do: set("scene", "world"),
           label: "Leave ⟶",
         },
@@ -160,6 +174,34 @@ const scenes: SceneConfig = {
       ],
       actions: [
         {
+          id: "leave",
+          do: set("scene", "world"),
+          label: "Leave ⟶",
+        },
+        {
+          id: "frank",
+          locked: true,
+          do: set("scene", "detective"),
+          label: "Take me to Frank ⟶",
+        },
+      ],
+    },
+  },
+  detective: {
+    app: "chat",
+    config: {
+      bot: "detective",
+      bg: detective,
+      preload: [
+        {
+          text: "What do you want?",
+          isOwn: false,
+          ts: 0,
+        },
+      ],
+      actions: [
+        {
+          id: "leave",
           do: set("scene", "world"),
           label: "Leave ⟶",
         },

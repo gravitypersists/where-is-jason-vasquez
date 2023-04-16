@@ -1,0 +1,8 @@
+{
+  "I can take you to Frank.": ["frank"],
+  "I can take you to Officer Malone's office to discuss the case further.": [
+    "frank"
+  ],
+  "please follow me to Officer Malone's office.": ["frank"],
+  "Sure, follow me. Frank's office is down the hall.": ["frank"]
+}

@@ -28,13 +28,18 @@ const actions = [
 function ChatScene() {
   const { scene, setState } = useGameState();
   return (
-    <Background src={(scene as ChatSceneConfig).config.bg}>
+    <Background
+      src={(scene as ChatSceneConfig).config.bg}
+      key={(scene as ChatSceneConfig).config.bot}
+    >
       <ChatAppContainer>
         <ChatApp />
       </ChatAppContainer>
       <ActionsContainer>
         {(scene as ChatSceneConfig).config.actions.map((action) => (
-          <Button onClick={() => setState(action.do)}>{action.label}</Button>
+          <Button key={action.id} onClick={() => setState(action.do)}>
+            {action.label}
+          </Button>
         ))}
       </ActionsContainer>
     </Background>

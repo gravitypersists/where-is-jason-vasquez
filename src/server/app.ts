@@ -27,6 +27,12 @@ io.on("connection", (socket: Socket) => {
   const bot = new LoadableNpc({
     dir: path.join(__dirname, botPaths[botName]),
     preload,
+    onAction: (action) => {
+      console.log("emitting bot action: ", action);
+      io.emit(`emit:${botName}:action`, {
+        action,
+      });
+    },
   });
   bot.setModes(botState);
 

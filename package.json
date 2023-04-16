@@ -8,6 +8,7 @@
     "preview": "vite preview",
     "embed": "ts-node --project tsconfig.node.json --esm src/scripts/buildEmbeddings.ts",
     "populate": "ts-node --project tsconfig.node.json --esm src/scripts/populateIndexNamespace.ts",
+    "d3lete": "ts-node --project tsconfig.node.json --esm src/scripts/deleteIndex.ts",
     "testq": "ts-node --project tsconfig.node.json --esm src/npcs/Bartender/testQueries.ts",
     "serve": "ts-node --project tsconfig.node.json --esm ./src/server/app.ts",
     "zip": "git archive --format=zip --output /Users/michaelsilveira/Desktop/whisper.zip master"
@@ -15,11 +16,13 @@
   "dependencies": {
     "@pinecone-database/pinecone": "^0.0.12",
     "axios": "^1.3.4",
+    "chromadb": "^1.3.1",
     "fastify": "^4.15.0",
     "framer-motion": "^10.11.2",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-use-localstorage": "^3.5.3",
     "socket-io": "^1.0.0",
     "socket.io": "^4.6.1",
     "socket.io-client": "^4.6.1",

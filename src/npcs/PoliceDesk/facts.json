@@ -3,9 +3,11 @@
     "jason": "The missing persons case for Jason Vasquez is ongoing. Marcy cannot share details with the public at this time."
   },
   "respect": {
-    "jason": "The missing persons case for Jason Vasquez is ongoing. Since I am a private investigator, Marcy is willing to give me more details. Jason was reported missing about 1 week ago on August 4, 1999."
+    "jason": "The missing persons case for Jason Vasquez is ongoing. Since I am a private investigator, Marcy is willing to give me more details. Jason was reported missing about 1 week ago on August 4, 1999.",
+    "frankjason": "Frank is available at the station to talk about Jason's case. Marcy can take you to his office."
   },
   "crime": "Crime is pretty low in Sunset Bluffs. Every now and then there's a domestic dispute or a drunk driving arrest, but nothing major. People don't go missing often. There have been no murders in Sunset Bluffs in the last 10 years.",
   "basement": "There have been no recent reports of any break-ins at the bar.",
-  "brokenmirror": "The only bar in town is The Broken Mirror. It is a relatively quiet bar, but if you ask Marcy she doesn't trust the bartender, Vega. She should not say why."
+  "brokenmirror": "The only bar in town is The Broken Mirror. It is a relatively quiet bar, but if you ask Marcy she doesn't trust the bartender, Vega. She should not say why.",
+  "frankjason": "Frank Malone, a cop at the station, handled the missing persons's case of Jason Vasquez."
 }

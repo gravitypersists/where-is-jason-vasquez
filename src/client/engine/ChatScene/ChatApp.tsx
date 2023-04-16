@@ -103,7 +103,7 @@ const MessageLoading = () => {
 };
 
 const ChatApp = () => {
-  const { scene, state } = useGameState();
+  const { scene, state, unlockActions } = useGameState();
   const botName = (scene as ChatSceneConfig).config.bot;
   const [socket, setSocket] = useState<Socket | null>(null);
   const [message, setMessage] = useState<string>("");
@@ -134,6 +134,13 @@ const ChatApp = () => {
         ({ message, ts }: { message: string; ts: number }) => {
           setAwaitingResponse(false);
           setMessages(messageMerger(message, ts, false));
+        }
+      );
+      socket.on(
+        `emit:${botName}:action`,
+        ({ action }: { action: string[] }) => {
+          unlockActions(action);
+          console.log("got actions", action);
         }
       );
     }
