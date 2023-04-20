@@ -13,11 +13,18 @@ const botPaths = {
   mother: "../npcs/Mother",
   bartender: "../npcs/Bartender",
   policedesk: "../npcs/PoliceDesk",
+  detective: "../npcs/Detective",
+  receptionist: "../npcs/Receptionist",
+  landlord: "../npcs/Landlord",
+  neighbor1: "../npcs/Neighbor1",
 };
 
 io.on("connection", (socket: Socket) => {
   const botName = socket.handshake.query.botName as keyof typeof botPaths;
-  if (botPaths[botName] === undefined) return;
+  if (botPaths[botName] === undefined) {
+    console.error("Bad bot name: ", botName);
+    return;
+  }
   const preload = socket.handshake.query.preload as string;
   const botState = JSON.parse(
     socket.handshake.query.botState as string

@@ -12,8 +12,5 @@
       "unless": ["jailed"]
     }
   },
-  "actions": {
-    "frank": {}
-  },
   "permanentFacts": ["jason"]
 }

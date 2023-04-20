@@ -3,10 +3,7 @@ import { getIndex } from "../npcs/base/Indexes";
 import fs from "fs";
 import path from "path";
 import { isString, has, toPairs } from "lodash";
-
-const npcs = ["PoliceDesk", "Bartender", "Mother", "Receptionist"];
-
-const paths = npcs.map((x) => `../npcs/${x}`);
+import paths from "./npcPaths";
 
 const embeddingsFile = path.join(__dirname, "../npcs/embeddings.json");
 const embeddings = JSON.parse(fs.readFileSync(embeddingsFile, "utf8"));

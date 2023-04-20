@@ -21,7 +21,7 @@ const photos: Photo[] = [
 
 const texts = [
   "A game by Michael Silveira",
-  "Powered by our collective unconscious, ChatGPT",
+  "Powered by our collective unconscious through ChatGPT",
   "Art stolen and remixed by Midjourney",
   "Where is Jason Vasquez?",
 ];

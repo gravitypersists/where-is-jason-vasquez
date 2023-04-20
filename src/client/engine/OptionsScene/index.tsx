@@ -4,7 +4,6 @@ import { useGameState } from "../../State";
 import Button, { ButtonRow } from "../../ui/Button";
 import Background from "../Scene/Background";
 import { OptionsSceneConfig } from "../../scenes";
-import pi from "../../assets/scenes/pi.png";
 
 const Container = styled.div`
   position: absolute;
@@ -13,8 +12,9 @@ const Container = styled.div`
   margin: 0 auto;
 `;
 export default function OptionsScene() {
-  const { scene, setScene } = useGameState();
-  const chunks = chunk((scene as OptionsSceneConfig).config.options, 1);
+  const { scene, setState } = useGameState();
+  const options = (scene as OptionsSceneConfig).config.actions;
+  const chunks = chunk(options, 1);
   return (
     <Background
       src={(scene as OptionsSceneConfig).config.bg}
@@ -27,10 +27,7 @@ export default function OptionsScene() {
           {chunks.map((chonk, i) => (
             <div key={i}>
               {chonk.map((option) => (
-                <Button
-                  onClick={() => setScene(option.goto)}
-                  key={option.label}
-                >
+                <Button onClick={() => setState(option.do)} key={option.label}>
                   {option.label}
                 </Button>
               ))}

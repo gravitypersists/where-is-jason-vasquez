@@ -1,0 +1,8 @@
+{
+  "I'm sorry, I don't have time for this. Goodbye. *hangs up*": [
+    "delay",
+    "end"
+  ],
+  "Click. The neighbor has hung up on you": ["delay", "end"],
+  "Sure, let me buzz you in.": ["enter"]
+}

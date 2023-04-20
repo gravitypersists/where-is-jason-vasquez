@@ -1,0 +1,19 @@
+{
+  "I'm looking into details about Jason Vasquez": ["jason"],
+  "Where does Jason Vasquez live?": ["jason", "jasonshome"],
+  "What did you investigate in the case?": [
+    "jason",
+    "jasonshome",
+    "jasonscase",
+    "jasonsfriends"
+  ],
+  "Do you think Jason was murdered": ["jason", "murder"],
+  "Did you check at the local hospital?": ["hospital"],
+  "What do you think of Vega?": ["bartender"],
+  "Who do you think broke into the bar?": ["bartender", "breakin"],
+  "What case are you working on?": ["case"],
+  "What are you wokring on?": ["case"],
+  "Can you tell me about crime in the area?": ["currentjob", "case"],
+  "Tell me about yourself": ["self"],
+  "Can you give me the landlord's contact info": ["landlord"]
+}

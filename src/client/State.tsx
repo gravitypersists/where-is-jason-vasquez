@@ -10,16 +10,18 @@ export type GameState = {
     [bot: string]: string[];
   };
   sceneUnlocks: { [scene: string]: string[] };
+  sceneLocks: { [scene: string]: string[] };
 };
 
 const defaultState: GameState = {
-  // scene: "start",
-  scene: "world",
+  scene: "start",
+  // scene: "world",
   botStates: {
     policedesk: ["disdain"],
     mother: ["intro"],
   },
   sceneUnlocks: {},
+  sceneLocks: {},
 };
 
 const defaultStateString = JSON.stringify(defaultState);
@@ -52,21 +54,18 @@ export const useGameState = () => {
   const scene = update(
     "config.actions",
     (actions: SceneAction[] = []) =>
-      actions.filter((action) =>
-        action.locked
-          ? state.sceneUnlocks[state.scene]?.includes(action.id)
-          : true
-      ),
+      actions.filter((action) => {
+        if (action.locked && action.id) {
+          return state.sceneUnlocks[state.scene]?.includes(action.id);
+        }
+        return (
+          !action.id || !state.sceneLocks[state.scene]?.includes(action.id)
+        );
+      }),
     sceneRaw
   );
   const setScene = (scene: keyof typeof scenes) =>
     setState(set("scene", scene));
-  const unlockActions = (action: string[]) =>
-    setState(
-      update(`sceneUnlocks.${state.scene}`, (unlocks: string[] = []) =>
-        uniq([...unlocks, ...action])
-      )
-    );
 
-  return { state, scene, setState, setScene, unlockActions };
+  return { state, scene, setState, setScene };
 };

@@ -3,16 +3,7 @@ import OpenApiEmbeddings, { EmbeddingResponse } from "../npcs/base/Embeddings";
 import * as fs from "fs";
 import * as path from "path";
 import { fromPairs, toPairs } from "lodash";
-
-const npcs = [
-  // list of NPCs
-  "PoliceDesk",
-  "Bartender",
-  "Mother",
-  "Receptionist",
-];
-
-const paths = npcs.map((x) => `../npcs/${x}`);
+import paths from "./npcPaths";
 
 export type VectorizedContext = {
   [key: string]: {

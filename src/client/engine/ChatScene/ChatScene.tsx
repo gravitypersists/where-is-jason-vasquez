@@ -26,12 +26,9 @@ const actions = [
 ];
 
 function ChatScene() {
-  const { scene, setState } = useGameState();
+  const { scene, setState, state } = useGameState();
   return (
-    <Background
-      src={(scene as ChatSceneConfig).config.bg}
-      key={(scene as ChatSceneConfig).config.bot}
-    >
+    <Background src={(scene as ChatSceneConfig).config.bg} key={state.scene}>
       <ChatAppContainer>
         <ChatApp />
       </ChatAppContainer>

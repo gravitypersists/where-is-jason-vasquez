@@ -103,21 +103,24 @@ const MessageLoading = () => {
 };
 
 const ChatApp = () => {
-  const { scene, state, unlockActions } = useGameState();
-  const botName = (scene as ChatSceneConfig).config.bot;
+  const { scene: sc, state, setState } = useGameState();
+  const scene = sc as ChatSceneConfig;
+  const botName = scene.config.bot;
   const [socket, setSocket] = useState<Socket | null>(null);
   const [message, setMessage] = useState<string>("");
   const [awaitingResponse, setAwaitingResponse] = useState<boolean>(false);
-  const [messages, setMessages] = useState<Message[]>(
-    (scene as ChatSceneConfig).config.preload
-  );
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
+    if (botName === "none") return;
+    const botState = state.botStates[botName] || [];
+    const enforceMode = scene.config.enforceMode || [];
+    const modes = [...botState, ...enforceMode];
     const socket = io("http://localhost:3030", {
       query: {
         botName,
-        preload: (scene as ChatSceneConfig).config.preload.map((x) => x.text),
-        botState: JSON.stringify(state.botStates[botName] || []),
+        preload: scene.config.preload.map((x) => x.text),
+        botState: JSON.stringify(modes),
       },
     });
     setSocket(socket);
@@ -134,17 +137,57 @@ const ChatApp = () => {
         ({ message, ts }: { message: string; ts: number }) => {
           setAwaitingResponse(false);
           setMessages(messageMerger(message, ts, false));
+          const stringMatchActions = scene.config.stringMatches || [];
+          stringMatchActions.map(({ match, do: doit }) => {
+            if (message.includes(match)) {
+              setState(doit);
+            }
+          });
         }
       );
       socket.on(
         `emit:${botName}:action`,
         ({ action }: { action: string[] }) => {
-          unlockActions(action);
           console.log("got actions", action);
+          const on = scene.config.on;
+          if (!on) return;
+          const timeout = action.some((a) => a === "delay") ? 4000 : 0;
+          console.log("timeout", timeout);
+          setTimeout(() => {
+            console.log("timeoutdone");
+            action.forEach((a) => {
+              console.log({ on: on[a] });
+              if (on[a]) {
+                setState(on[a]);
+              }
+            });
+          }, timeout);
         }
       );
     }
   }, [socket, setAwaitingResponse, setMessages]);
+
+  useEffect(() => {
+    if (scene.config.phoneMode && messages.length === 0) {
+      setMessages([{ text: "Ringing...", isOwn: false, ts: Date.now() }]);
+      setAwaitingResponse(true);
+      setTimeout(() => {
+        setMessages(scene.config.preload);
+        if (scene.config.nobodyHome) {
+          setMessages([
+            { text: "Nobody Answered", isOwn: false, ts: Date.now() },
+          ]);
+          setTimeout(() => {
+            if (scene.config.on?.end) setState(scene.config.on.end);
+          }, 2000);
+        } else {
+          setAwaitingResponse(false);
+        }
+      }, 2000);
+    } else if (messages.length === 0) {
+      setMessages(scene.config.preload);
+    }
+  }, [scene]);
 
   const handleSendMessage = () => {
     if (message === "") return;
