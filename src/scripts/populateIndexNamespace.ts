@@ -58,17 +58,22 @@ function readFiles(dir: string) {
         };
       });
 
-      console.log(`Upsert contexts index for ${details.name}...`);
-      await index.upsert({
-        upsertRequest: { vectors: contextVectors, namespace: details.name },
-      });
-      console.log(`Upsert actions index for ${details.name}...`);
-      await index.upsert({
-        upsertRequest: {
-          vectors: actionVectors,
-          namespace: "act " + details.name,
-        },
-      });
+      if (contextVectors.length > 0) {
+        console.log(`Upsert contexts index for ${details.name}...`);
+        await index.upsert({
+          upsertRequest: { vectors: contextVectors, namespace: details.name },
+        });
+      }
+
+      if (actionVectors.length > 0) {
+        console.log(`Upsert actions index for ${details.name}...`);
+        await index.upsert({
+          upsertRequest: {
+            vectors: actionVectors,
+            namespace: "act " + details.name,
+          },
+        });
+      }
     });
   } catch (e) {
     console.error(e);

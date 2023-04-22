@@ -3,5 +3,8 @@
     "delay",
     "hangup"
   ],
-  "Click. Harold has hung up on you.": ["delay", "hangup"]
+  "Click. Harold has hung up on you.": ["delay", "hangup"],
+  "I'll call the tenant ahead in apartment 2B and let them know to give you a key to Jason's apartment.": [
+    "call2b"
+  ]
 }

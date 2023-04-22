@@ -4,5 +4,6 @@
     "end"
   ],
   "Click. The neighbor has hung up on you": ["delay", "end"],
-  "Sure, let me buzz you in.": ["enter"]
+  "Sure, let me buzz you in.": ["enter"],
+  "Sure, I'll pass the key to 3B under the door for you.": ["givekey"]
 }

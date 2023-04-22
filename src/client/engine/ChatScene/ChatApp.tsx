@@ -152,9 +152,7 @@ const ChatApp = () => {
           const on = scene.config.on;
           if (!on) return;
           const timeout = action.some((a) => a === "delay") ? 4000 : 0;
-          console.log("timeout", timeout);
           setTimeout(() => {
-            console.log("timeoutdone");
             action.forEach((a) => {
               console.log({ on: on[a] });
               if (on[a]) {
@@ -168,8 +166,10 @@ const ChatApp = () => {
   }, [socket, setAwaitingResponse, setMessages]);
 
   useEffect(() => {
-    if (scene.config.phoneMode && messages.length === 0) {
-      setMessages([{ text: "Ringing...", isOwn: false, ts: Date.now() }]);
+    if (scene.config.waitMode && messages.length === 0) {
+      setMessages([
+        { text: scene.config.waitMode, isOwn: false, ts: Date.now() },
+      ]);
       setAwaitingResponse(true);
       setTimeout(() => {
         setMessages(scene.config.preload);
@@ -179,7 +179,7 @@ const ChatApp = () => {
           ]);
           setTimeout(() => {
             if (scene.config.on?.end) setState(scene.config.on.end);
-          }, 2000);
+          }, 4000);
         } else {
           setAwaitingResponse(false);
         }

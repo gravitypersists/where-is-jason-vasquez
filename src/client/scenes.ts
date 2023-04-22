@@ -28,7 +28,7 @@ export type ChatSceneConfig = {
     bg: string;
     preload: { text: string; isOwn: boolean; ts: number }[];
     actions: SceneAction[];
-    phoneMode?: boolean;
+    waitMode?: string;
     nobodyHome?: boolean;
     enforceMode?: string[];
     on?: {
@@ -211,7 +211,7 @@ const scenes: SceneConfig = {
           label: "Knock on door for apartment 2A",
         },
         {
-          do: set("scene", "neighbor1"),
+          do: set("scene", "neighbor1hall"),
           label: "Knock on door for apartment 2B",
         },
         {
@@ -221,6 +221,12 @@ const scenes: SceneConfig = {
         {
           do: set("scene", "nobodyhome"),
           label: "Knock on door for apartment 3B",
+        },
+        {
+          locked: true,
+          id: "key3b",
+          do: set("scene", "jasonsapartment"),
+          label: "Enter 3B",
         },
         {
           do: set("scene", "world"),
@@ -234,13 +240,26 @@ const scenes: SceneConfig = {
     config: {
       bot: "none",
       bg: apartments,
-      phoneMode: true,
+      waitMode: "Knocking...",
       nobodyHome: true,
-      enforceMode: ["buzz"],
       preload: [],
       actions: [],
       on: {
         end: set("scene", "apartmentgate"),
+      },
+    },
+  },
+  nobodyhomehall: {
+    app: "chat",
+    config: {
+      bot: "none",
+      bg: apartments,
+      waitMode: "Ringing...",
+      nobodyHome: true,
+      preload: [],
+      actions: [],
+      on: {
+        end: set("scene", "apartmenthall"),
       },
     },
   },
@@ -249,7 +268,7 @@ const scenes: SceneConfig = {
     config: {
       bot: "neighbor1",
       bg: apartments,
-      phoneMode: true,
+      waitMode: "Ringing...",
       enforceMode: ["buzz"],
       preload: [
         {
@@ -261,7 +280,7 @@ const scenes: SceneConfig = {
       actions: [
         {
           id: "leave",
-          do: set("scene", "world"),
+          do: set("scene", "apartmentgate"),
           label: "Leave ⟶",
         },
         {
@@ -291,6 +310,57 @@ const scenes: SceneConfig = {
         {
           match: "805-555-1498",
           do: addItems("sceneUnlocks.neighbor1", ["notelandlord"]),
+        },
+      ],
+    },
+  },
+  neighbor1hall: {
+    app: "chat",
+    config: {
+      bot: "neighbor1",
+      bg: apartmenthall,
+      waitMode: "Knocking...",
+      enforceMode: ["door"],
+      preload: [
+        {
+          text: "Who is it?",
+          isOwn: false,
+          ts: 0,
+        },
+      ],
+      actions: [
+        {
+          id: "leave",
+          do: set("scene", "apartmenthall"),
+          label: "Leave ⟶",
+        },
+        {
+          id: "notelandlord",
+          locked: true,
+          do: flow(
+            addItems("sceneUnlocks.payphone", ["landlord"]),
+            clearItems("sceneUnlocks.neighbor1hall", ["notelandlord"])
+          ),
+          label: "✍️ Write number down",
+        },
+        {
+          id: "takekey",
+          locked: true,
+          do: flow(
+            clearItems("sceneUnlocks.neighbor1hall", ["takekey"]),
+            addItems("sceneUnlocks.apartmenthall", ["key3b"])
+          ),
+          label: "🔑 Take key",
+        },
+      ],
+      on: {
+        end: set("scene", "apartmenthall"),
+        givekey: addItems("sceneUnlocks.neighbor1hall", ["takekey"]),
+      },
+      stringMatches: [
+        {
+          match: "805-555-1498",
+          do: addItems("sceneUnlocks.neighbor1hall", ["notelandlord"]),
         },
       ],
     },
@@ -358,7 +428,7 @@ const scenes: SceneConfig = {
     config: {
       bot: "mother",
       bg: payphone,
-      phoneMode: true,
+      waitMode: "Ringing...",
       preload: [
         {
           text: "Hello?",
@@ -395,7 +465,7 @@ const scenes: SceneConfig = {
     config: {
       bot: "landlord",
       bg: payphone,
-      phoneMode: true,
+      waitMode: "Ringing...",
       preload: [
         {
           text: "This is Harold",
@@ -421,11 +491,15 @@ const scenes: SceneConfig = {
       ],
       on: {
         hangup: set("scene", "payphone"),
+        call2b: addItems("botStates.neighbor1", ["landlordcalled"]),
       },
       stringMatches: [
         {
           match: "1234",
-          do: addItems("sceneUnlocks.landlord", ["notekeycode"]),
+          do: flow(
+            addItems("sceneUnlocks.landlord", ["notekeycode"]),
+            addItems("botStates.neighbor1", ["landlordcalled"])
+          ),
         },
       ],
     },

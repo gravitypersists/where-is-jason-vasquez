@@ -11,7 +11,7 @@ const GameContainer = styled.div`
 `;
 
 function SceneSelection() {
-  const { scene } = useGameState();
+  const { scene, setScene } = useGameState();
   if (!scene) return <div>Unknown scene</div>;
   switch (scene.app) {
     case "chat":
@@ -21,7 +21,12 @@ function SceneSelection() {
     case "options":
       return <OptionsScene />;
     default:
-      return <div>Unknown scene</div>;
+      return (
+        <div>
+          Unknown scene{" "}
+          <button onClick={() => setScene("world")}>go home</button>
+        </div>
+      );
   }
 }
 
