@@ -14,9 +14,9 @@ class Bartender extends Npc {
       fs.readFileSync(path.join(dir, "./config.json"), "utf8")
     );
     const global = JSON.parse(
-      fs.readFileSync(path.join(dir, "../Global/facts.json"), "utf8")
+      fs.readFileSync(path.join(dir, "../Global/config.json"), "utf8")
     );
-    config.facts.global = global;
+    config.facts.global = global.facts;
 
     super({
       ...rest,

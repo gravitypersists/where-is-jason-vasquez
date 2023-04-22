@@ -19,6 +19,7 @@ export type SceneAction = {
   locked?: boolean;
   do: (state: GameState) => GameState;
   label: string;
+  flash?: boolean;
 };
 
 export type ChatSceneConfig = {
@@ -291,6 +292,7 @@ const scenes: SceneConfig = {
             clearItems("sceneUnlocks.neighbor1", ["notelandlord"])
           ),
           label: "✍️ Write number down",
+          flash: true,
         },
         {
           id: "enter",
@@ -299,7 +301,8 @@ const scenes: SceneConfig = {
             clearItems("sceneUnlocks.neighbor1", ["enter"]),
             set("scene", "apartmenthall")
           ),
-          label: "Enter apartment ⟶",
+          label: "Enter apartment Building ⟶",
+          flash: true,
         },
       ],
       on: {
@@ -342,6 +345,7 @@ const scenes: SceneConfig = {
             clearItems("sceneUnlocks.neighbor1hall", ["notelandlord"])
           ),
           label: "✍️ Write number down",
+          flash: true,
         },
         {
           id: "takekey",
@@ -351,6 +355,7 @@ const scenes: SceneConfig = {
             addItems("sceneUnlocks.apartmenthall", ["key3b"])
           ),
           label: "🔑 Take key",
+          flash: true,
         },
       ],
       on: {
@@ -383,6 +388,7 @@ const scenes: SceneConfig = {
           locked: false,
           do: set("scene", "title"),
           label: "Accept the case ⟶",
+          flash: true,
         },
         {
           id: "noteaddress",
@@ -392,6 +398,7 @@ const scenes: SceneConfig = {
             clearItems("sceneUnlocks.start", ["noteaddress"])
           ),
           label: "✍️ Write address down",
+          flash: true,
         },
       ],
       stringMatches: [
@@ -450,6 +457,7 @@ const scenes: SceneConfig = {
             clearItems("sceneUnlocks.phonefilomena", ["noteaddress"])
           ),
           label: "✍️ Write address down",
+          flash: true,
         },
       ],
       stringMatches: [
@@ -487,6 +495,7 @@ const scenes: SceneConfig = {
             clearItems("sceneUnlocks.landlord", ["notekeycode"])
           ),
           label: "✍️ Write address down",
+          flash: true,
         },
       ],
       on: {
@@ -532,6 +541,7 @@ const scenes: SceneConfig = {
             clearItems("sceneUnlocks.world", ["checkedin"])
           ),
           label: "🔑 Take key",
+          flash: true,
         },
         {
           id: "gotoroom",
@@ -568,6 +578,7 @@ const scenes: SceneConfig = {
           locked: true,
           do: set("scene", "detective"),
           label: "Take me to Frank ⟶",
+          flash: true,
         },
       ],
       on: {
@@ -600,7 +611,8 @@ const scenes: SceneConfig = {
             addItems("sceneUnlocks.payphone", ["landlord"]),
             clearItems("sceneUnlocks.detective", ["notelandlord"])
           ),
-          label: "✍️ Write number down",
+          label: "✍️ Write phone number down",
+          flash: true,
         },
         {
           id: "noteaddress",
@@ -610,6 +622,7 @@ const scenes: SceneConfig = {
             clearItems("sceneUnlocks.detective", ["noteaddress"])
           ),
           label: "✍️ Write address down",
+          flash: true,
         },
       ],
       on: {

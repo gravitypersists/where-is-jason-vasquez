@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 const Button = styled.button`
   color: #fff;
@@ -24,6 +24,28 @@ const Button = styled.button`
 export const ButtonRow = styled.div`
   display: flex;
   gap: 8px;
+`;
+
+const pulse = keyframes`
+  0% {
+    transform: scale(1);
+  }
+  60% {
+    transform: scale(1.03);
+  }
+  90% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+`;
+
+export const FlashButton = styled(Button)`
+  animation: ${pulse} 1.5s infinite ease-in-out;
+  &:hover {
+    animation: none;
+  }
 `;
 
 export default Button;

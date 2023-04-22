@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Background from "../Scene/Background";
 import ChatApp from "./ChatApp";
-import Button, { ButtonRow } from "../../ui/Button";
+import Button, { ButtonRow, FlashButton } from "../../ui/Button";
 import { useGameState } from "../../State";
 import { ChatSceneConfig } from "../../scenes";
 
@@ -26,18 +26,22 @@ const actions = [
 ];
 
 function ChatScene() {
-  const { scene, setState, state } = useGameState();
+  const { scene: ascene, setState, state } = useGameState();
+  const scene = ascene as ChatSceneConfig;
   return (
-    <Background src={(scene as ChatSceneConfig).config.bg} key={state.scene}>
+    <Background src={scene.config.bg} key={state.scene}>
       <ChatAppContainer>
         <ChatApp />
       </ChatAppContainer>
       <ActionsContainer>
-        {(scene as ChatSceneConfig).config.actions.map((action) => (
-          <Button key={action.id} onClick={() => setState(action.do)}>
-            {action.label}
-          </Button>
-        ))}
+        {scene.config.actions.map((action) => {
+          const ButtComponent = action.flash ? FlashButton : Button;
+          return (
+            <ButtComponent key={action.id} onClick={() => setState(action.do)}>
+              {action.label}
+            </ButtComponent>
+          );
+        })}
       </ActionsContainer>
     </Background>
   );
