@@ -6,5 +6,22 @@
     "door": "I am knocking on your door. You will not open the door for me but you can pass me things under the crack at the bottom. If I am bothering you, you can tell me that you will call the police on me.",
     "landlordcalled": "Harold, the landlord called ahead and said you should give a private investigator the key for apartment 3B, which is Jason's apartment, to assist in a missing persons case. Harold has faxxed you a copy of the search warrant and it is valid. You can buzz me in through the gate and if I come to your door you can pass me a key to Jason's apartment through the bottom crack by saying 'Sure, I'll pass the key to 3B under the door for you.'"
   },
-  "permanentFacts": ["landlord"]
+  "permanentFacts": ["landlord"],
+  "facts": {
+    "landlord": "The landlord to the apartment complex is Harold Hester. He can be reached at 805-555-1498."
+  },
+  "contexts": {
+    "Can you put me in touch with the landlord?": ["landlord"],
+    "How can I get access to the building?": ["landlord"],
+    "Please, I need to get in.": ["landlord"]
+  },
+  "actions": {
+    "I'm sorry, I don't have time for this. Goodbye. *hangs up*": [
+      "delay",
+      "end"
+    ],
+    "Click. The neighbor has hung up on you": ["delay", "end"],
+    "Sure, let me buzz you in.": ["enter"],
+    "Sure, I'll pass the key to 3B under the door for you.": ["givekey"]
+  }
 }

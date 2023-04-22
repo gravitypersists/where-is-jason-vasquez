@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import { isString, has, toPairs } from "lodash";
 import paths from "./npcPaths";
+import readConfig from "./readConfig";
 
 const embeddingsFile = path.join(__dirname, "../npcs/embeddings.json");
 const embeddings = JSON.parse(fs.readFileSync(embeddingsFile, "utf8"));
@@ -27,7 +28,7 @@ function readFiles(dir: string) {
     const index = await getIndex("npcs");
 
     paths.forEach(async (p) => {
-      const { details, actions, contexts } = readFiles(p);
+      const { name, actions, contexts } = readConfig(p);
 
       const contextVectors = toPairs(contexts).map((ctx) => {
         const [prompt, context] = ctx;
@@ -40,7 +41,7 @@ function readFiles(dir: string) {
           : [];
 
         return {
-          id: uuidv5(prompt + details.name, uuidv5.URL),
+          id: uuidv5(prompt + name, uuidv5.URL),
           metadata: { prompt, facts, modeSwitch },
           values: embedding.vector.data[0].embedding,
         };
@@ -52,25 +53,27 @@ function readFiles(dir: string) {
         if (!embedding) throw new Error(`No embed for ${prompt}!`);
 
         return {
-          id: uuidv5(prompt + "act" + details.name, uuidv5.URL),
+          id: uuidv5(prompt + "act" + name, uuidv5.URL),
           metadata: { prompt, actions },
           values: embedding.vector.data[0].embedding,
         };
       });
 
       if (contextVectors.length > 0) {
-        console.log(`Upsert contexts index for ${details.name}...`);
+        console.log(`Upsert contexts index for ${name}...`);
+        // console.log(name, contextVectors.length);
         await index.upsert({
-          upsertRequest: { vectors: contextVectors, namespace: details.name },
+          upsertRequest: { vectors: contextVectors, namespace: name },
         });
       }
 
       if (actionVectors.length > 0) {
-        console.log(`Upsert actions index for ${details.name}...`);
+        console.log(`Upsert actions index for ${name}...`);
+        // console.log(name, actionVectors.length);
         await index.upsert({
           upsertRequest: {
             vectors: actionVectors,
-            namespace: "act " + details.name,
+            namespace: "act " + name,
           },
         });
       }
