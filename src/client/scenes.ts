@@ -13,13 +13,15 @@ import pool from "./assets/scenes/pool.png";
 import imprisoned from "./assets/scenes/imprisoned.png";
 import apartments from "./assets/scenes/apartments.png";
 import apartmenthall from "./assets/scenes/apartmenthall.png";
+import jasonsapartment from "./assets/scenes/jasonsapartment.png";
 
 export type SceneAction = {
   id?: string;
   locked?: boolean;
-  do: (state: GameState) => GameState;
+  do?: (state: GameState) => GameState;
   label: string;
   flash?: boolean;
+  pre?: (state?: GameState) => string;
 };
 
 export type ChatSceneConfig = {
@@ -55,6 +57,7 @@ export type OptionsSceneConfig = {
   config: {
     bg: string;
     actions: SceneAction[];
+    pre?: (state?: GameState) => string;
   };
 };
 
@@ -120,38 +123,90 @@ const scenes: SceneConfig = {
       ],
     },
   },
-  motelroom: {
-    app: "options",
+  phonefilomena: {
+    app: "chat",
     config: {
-      bg: motelroom,
+      bot: "mother",
+      bg: payphone,
+      waitMode: "Ringing...",
+      preload: [
+        {
+          text: "Hello?",
+          isOwn: false,
+          ts: 0,
+        },
+      ],
       actions: [
         {
-          do: set("scene", "receptionist"),
-          label: "Go to the reception desk",
-        },
-        {
-          do: set("scene", "pool"),
-          label: "Go to the pool",
-        },
-        {
+          id: "leave",
           do: set("scene", "world"),
-          label: "Leave",
+          label: "Hang up ⟶",
+        },
+        {
+          id: "noteaddress",
+          locked: true,
+          do: flow(
+            addItems("sceneUnlocks.world", ["landlord"]),
+            clearItems("sceneUnlocks.phonefilomena", ["noteaddress"])
+          ),
+          label: "✍️ Write address down",
+          flash: true,
+        },
+      ],
+      stringMatches: [
+        {
+          match: "76 Seaborn Avenue",
+          do: addItems("sceneUnlocks.phonefilomena", ["noteaddress"]),
         },
       ],
     },
   },
-  pool: {
-    app: "options",
+  landlord: {
+    app: "chat",
     config: {
-      bg: pool,
+      bot: "landlord",
+      bg: payphone,
+      waitMode: "Ringing...",
+      preload: [
+        {
+          text: "This is Harold",
+          isOwn: false,
+          ts: 0,
+        },
+      ],
       actions: [
         {
-          do: set("scene", "motelroom"),
-          label: "Leave",
+          id: "leave",
+          do: set("scene", "world"),
+          label: "Hang up ⟶",
+        },
+        {
+          id: "notekeycode",
+          locked: true,
+          do: flow(
+            addItems("sceneUnlocks.apartmentgate", ["keycode"]),
+            clearItems("sceneUnlocks.landlord", ["notekeycode"])
+          ),
+          label: "✍️ Write address down",
+          flash: true,
+        },
+      ],
+      on: {
+        hangup: set("scene", "payphone"),
+        call2b: addItems("botStates.neighbor1", ["landlordcalled"]),
+      },
+      stringMatches: [
+        {
+          match: "1234",
+          do: flow(
+            addItems("sceneUnlocks.landlord", ["notekeycode"]),
+            addItems("botStates.neighbor1", ["landlordcalled"])
+          ),
         },
       ],
     },
   },
+  // APARTMENTS
   apartmentgate: {
     app: "options",
     config: {
@@ -370,45 +425,130 @@ const scenes: SceneConfig = {
       ],
     },
   },
-  start: {
-    app: "chat",
+  jasonsapartment: {
+    app: "options",
     config: {
-      bot: "mother",
-      bg: filomena,
-      preload: [
-        {
-          text: "My son is missing. Please help me find him.",
-          isOwn: false,
-          ts: 0,
-        },
-      ],
+      bg: jasonsapartment,
+      pre: () =>
+        `Air stale, curtains drawn, room shrouded in darkness. No signs of life for at least a week. Floorboards creak, musty scent of neglect hung in the air, and unease creeps over like a parasite.`,
       actions: [
         {
-          id: "accept",
-          locked: false,
-          do: set("scene", "title"),
-          label: "Accept the case ⟶",
-          flash: true,
+          do: set("scene", "jasonsbedroom"),
+          label: "Enter bedroom",
         },
         {
-          id: "noteaddress",
-          locked: true,
-          do: flow(
-            addItems("sceneUnlocks.world", ["apartmentgate"]),
-            clearItems("sceneUnlocks.start", ["noteaddress"])
-          ),
-          label: "✍️ Write address down",
-          flash: true,
+          do: set("scene", "jasonslivingroom"),
+          label: "Enter living room",
         },
-      ],
-      stringMatches: [
         {
-          match: "76 Seaborn Avenue",
-          do: addItems("sceneUnlocks.start", ["noteaddress"]),
+          do: set("scene", "jasonskitchen"),
+          label: "Enter kitchen",
+        },
+        {
+          do: set("scene", "apartmenthall"),
+          label: "Leave ⟶",
         },
       ],
     },
   },
+  jasonsbedroom: {
+    app: "options",
+    config: {
+      bg: jasonsapartment,
+      pre: () =>
+        `Darkness shrouds the room. Only light comes from a thin beam of sunlight struggling to penetrate the drawn curtains. Bed is a mess. Pile of clothes outgrows the hamper. Piles of books on nightstand, clearly not read.`,
+      actions: [
+        {
+          pre: () => `Seems to be a makeshift storage solution. No shoes.`,
+          label: "Check closet",
+        },
+        {
+          pre: () =>
+            `A disarray of personal items, sparsely an item of clothing. Nothing to note, nothing of value.`,
+          label: "Check dresser",
+        },
+        {
+          do: set("scene", "jasonslivingroom"),
+          label: "Enter living room",
+        },
+        {
+          do: set("scene", "jasonskitchen"),
+          label: "Enter kitchen",
+        },
+        {
+          do: set("scene", "apartmenthall"),
+          label: "Leave ⟶",
+        },
+      ],
+    },
+  },
+  jasonslivingroom: {
+    app: "options",
+    config: {
+      bg: jasonsapartment,
+      pre: () =>
+        `Blinds down. A couch. In front of a TV. Predictable. A computer desk in the corner.`,
+      actions: [
+        {
+          pre: () =>
+            `Remote is missing, but a button on the set works. Instead of the familiar mindless glow of sound and vision... static. A droning monochrome noise. For a moment, a sense of ease, drawn in by the siren's call of oblivion.`,
+          label: "Turn on the tv",
+        },
+        {
+          pre: () =>
+            `A glow emanates from the CRT screen, and then a mechanical symphony of nonsense, as if the dusty old tower were housing a rabid robotic ferret. Amidst the glow of the monitor, a cursor blinks, almost straining. A flurry of technobabble fills the screen, but among the noise, a solitary piece of natural language: Error: No bootable device found. Press any key to reboot.`,
+          label: "Turn on the computer",
+        },
+        {
+          pre: () => `It's old, used, but surprisingly very comfortable.`,
+          label: "Sit on the couch",
+        },
+        {
+          do: set("scene", "jasonsbedroom"),
+          label: "Enter bedroom",
+        },
+        {
+          do: set("scene", "jasonskitchen"),
+          label: "Enter kitchen",
+        },
+        {
+          do: set("scene", "apartmenthall"),
+          label: "Leave ⟶",
+        },
+      ],
+    },
+  },
+  jasonskitchen: {
+    app: "options",
+    config: {
+      bg: jasonsapartment,
+      pre: () => `TODO`,
+      actions: [
+        {
+          pre: () =>
+            `A cold, empty interior. Food's been cleaned out, all that remains are standard condiments and an expired pack of healthy yogurts, ambitions nobody wanted to touch.`,
+          label: "Open the fridge",
+        },
+        {
+          pre: () => `Empty. With a fresh liner.`,
+          label: "Check the trash",
+        },
+        {
+          do: set("scene", "jasonsbedroom"),
+          label: "Enter bedroom",
+        },
+        {
+          do: set("scene", "jasonslivingroom"),
+          label: "Enter living room",
+        },
+        {
+          do: set("scene", "apartmenthall"),
+          label: "Leave ⟶",
+        },
+      ],
+    },
+  },
+  // BAR
   bartender: {
     app: "chat",
     config: {
@@ -430,89 +570,7 @@ const scenes: SceneConfig = {
       ],
     },
   },
-  phonefilomena: {
-    app: "chat",
-    config: {
-      bot: "mother",
-      bg: payphone,
-      waitMode: "Ringing...",
-      preload: [
-        {
-          text: "Hello?",
-          isOwn: false,
-          ts: 0,
-        },
-      ],
-      actions: [
-        {
-          id: "leave",
-          do: set("scene", "world"),
-          label: "Hang up ⟶",
-        },
-        {
-          id: "noteaddress",
-          locked: true,
-          do: flow(
-            addItems("sceneUnlocks.world", ["landlord"]),
-            clearItems("sceneUnlocks.phonefilomena", ["noteaddress"])
-          ),
-          label: "✍️ Write address down",
-          flash: true,
-        },
-      ],
-      stringMatches: [
-        {
-          match: "76 Seaborn Avenue",
-          do: addItems("sceneUnlocks.phonefilomena", ["noteaddress"]),
-        },
-      ],
-    },
-  },
-  landlord: {
-    app: "chat",
-    config: {
-      bot: "landlord",
-      bg: payphone,
-      waitMode: "Ringing...",
-      preload: [
-        {
-          text: "This is Harold",
-          isOwn: false,
-          ts: 0,
-        },
-      ],
-      actions: [
-        {
-          id: "leave",
-          do: set("scene", "world"),
-          label: "Hang up ⟶",
-        },
-        {
-          id: "notekeycode",
-          locked: true,
-          do: flow(
-            addItems("sceneUnlocks.apartments", ["keycode"]),
-            clearItems("sceneUnlocks.landlord", ["notekeycode"])
-          ),
-          label: "✍️ Write address down",
-          flash: true,
-        },
-      ],
-      on: {
-        hangup: set("scene", "payphone"),
-        call2b: addItems("botStates.neighbor1", ["landlordcalled"]),
-      },
-      stringMatches: [
-        {
-          match: "1234",
-          do: flow(
-            addItems("sceneUnlocks.landlord", ["notekeycode"]),
-            addItems("botStates.neighbor1", ["landlordcalled"])
-          ),
-        },
-      ],
-    },
-  },
+  // MOTEL
   receptionist: {
     app: "chat",
     config: {
@@ -555,6 +613,39 @@ const scenes: SceneConfig = {
       },
     },
   },
+  motelroom: {
+    app: "options",
+    config: {
+      bg: motelroom,
+      actions: [
+        {
+          do: set("scene", "receptionist"),
+          label: "Go to the reception desk",
+        },
+        {
+          do: set("scene", "pool"),
+          label: "Go to the pool",
+        },
+        {
+          do: set("scene", "world"),
+          label: "Leave",
+        },
+      ],
+    },
+  },
+  pool: {
+    app: "options",
+    config: {
+      bg: pool,
+      actions: [
+        {
+          do: set("scene", "motelroom"),
+          label: "Leave",
+        },
+      ],
+    },
+  },
+  // POLICE STATION
   policedesk: {
     app: "chat",
     config: {
@@ -640,6 +731,7 @@ const scenes: SceneConfig = {
       ],
     },
   },
+  // MISC
   arrested: {
     app: "chat",
     config: {
@@ -647,6 +739,45 @@ const scenes: SceneConfig = {
       bg: imprisoned,
       preload: [],
       actions: [],
+    },
+  },
+  start: {
+    app: "chat",
+    config: {
+      bot: "mother",
+      bg: filomena,
+      preload: [
+        {
+          text: "My son is missing. Please help me find him.",
+          isOwn: false,
+          ts: 0,
+        },
+      ],
+      actions: [
+        {
+          id: "accept",
+          locked: false,
+          do: set("scene", "title"),
+          label: "Accept the case ⟶",
+          flash: true,
+        },
+        {
+          id: "noteaddress",
+          locked: true,
+          do: flow(
+            addItems("sceneUnlocks.world", ["apartmentgate"]),
+            clearItems("sceneUnlocks.start", ["noteaddress"])
+          ),
+          label: "✍️ Write address down",
+          flash: true,
+        },
+      ],
+      stringMatches: [
+        {
+          match: "76 Seaborn Avenue",
+          do: addItems("sceneUnlocks.start", ["noteaddress"]),
+        },
+      ],
     },
   },
   title: {

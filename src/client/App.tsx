@@ -11,15 +11,15 @@ const GameContainer = styled.div`
 `;
 
 function SceneSelection() {
-  const { scene, setScene } = useGameState();
+  const { scene, setScene, state } = useGameState();
   if (!scene) return <div>Unknown scene</div>;
   switch (scene.app) {
     case "chat":
-      return <ChatScene />;
+      return <ChatScene key={state.scene} />;
     case "cutscene":
-      return <CutScene />;
+      return <CutScene key={state.scene} />;
     case "options":
-      return <OptionsScene />;
+      return <OptionsScene key={state.scene} />;
     default:
       return (
         <div>

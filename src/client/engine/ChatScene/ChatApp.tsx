@@ -140,6 +140,7 @@ const ChatApp = () => {
           const stringMatchActions = scene.config.stringMatches || [];
           stringMatchActions.map(({ match, do: doit }) => {
             if (message.includes(match)) {
+              console.log("matched", match);
               setState(doit);
             }
           });

@@ -14,7 +14,11 @@
   },
   "contexts": {
     "Tell me about Jason Vasquez": ["jason"],
-    "What can you tell me about Jason's apartment?": ["jason", "jasonshome"],
+    "What can you tell me about Jason's apartment?": [
+      "jason",
+      "jasonshome",
+      "keycode"
+    ],
     "Have you noticed anything strange about Jason lately?": [
       "jason",
       "jasonbehavior"
@@ -30,7 +34,12 @@
       "jason",
       "frankinvestigation"
     ],
-    "Can you let me into Jason's apartment?": ["jason", "jasonshome", "keycode"]
+    "Can you let me into Jason's apartment?": [
+      "jason",
+      "jasonshome",
+      "keycode"
+    ],
+    "what's the keycode to the apartments": ["jason", "jasonshome", "keycode"]
   },
   "actions": {
     "I'm sorry, I don't have time for this. Goodbye. *hangs up*": [
