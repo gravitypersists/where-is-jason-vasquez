@@ -110,10 +110,10 @@ const ChatApp = () => {
   const [message, setMessage] = useState<string>("");
   const [awaitingResponse, setAwaitingResponse] = useState<boolean>(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const botState = state.botStates[botName] || [];
 
   useEffect(() => {
     if (botName === "none") return;
-    const botState = state.botStates[botName] || [];
     const enforceMode = scene.config.enforceMode || [];
     const modes = [...botState, ...enforceMode];
     const socket = io("http://localhost:3030", {
@@ -140,7 +140,6 @@ const ChatApp = () => {
           const stringMatchActions = scene.config.stringMatches || [];
           stringMatchActions.map(({ match, do: doit }) => {
             if (message.includes(match)) {
-              console.log("matched", match);
               setState(doit);
             }
           });
@@ -155,7 +154,6 @@ const ChatApp = () => {
           const timeout = action.some((a) => a === "delay") ? 4000 : 0;
           setTimeout(() => {
             action.forEach((a) => {
-              console.log({ on: on[a] });
               if (on[a]) {
                 setState(on[a]);
               }
@@ -194,8 +192,14 @@ const ChatApp = () => {
     if (message === "") return;
     if (socket) {
       const ts = Date.now();
-      console.log("sending message: ", { message, ts });
-      socket.emit(`send:${botName}:message`, { message, ts });
+      const enforceMode = scene.config.enforceMode || [];
+      const botModes = [...botState, ...enforceMode];
+
+      console.log("sending message: ", { message, botModes });
+      socket.emit(`send:${botName}:message`, {
+        message,
+        botModes,
+      });
       setMessages(messageMerger(message, ts, true));
       setAwaitingResponse(true);
       setMessage("");

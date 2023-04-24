@@ -7,6 +7,7 @@ const npcs = [
   "Detective",
   "Landlord",
   "Neighbor1",
+  "BarWoman",
 ];
 
 const paths = npcs.map((x) => `../npcs/${x}`);

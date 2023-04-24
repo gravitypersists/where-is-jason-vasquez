@@ -3,6 +3,8 @@ import { flow, uniq, without } from "lodash";
 import { GameState } from "./State";
 import filomena from "./assets/scenes/filomena.png";
 import bartender from "./assets/scenes/bartender.png";
+import barwoman from "./assets/scenes/barwoman.png";
+import bar from "./assets/scenes/bar.png";
 import pi from "./assets/scenes/pi.png";
 import payphone from "./assets/scenes/payphone.png";
 import receptionist from "./assets/scenes/receptionist.png";
@@ -18,10 +20,18 @@ import jasonsapartment from "./assets/scenes/jasonsapartment.png";
 export type SceneAction = {
   id?: string;
   locked?: boolean;
-  do?: (state: GameState) => GameState;
   label: string;
+};
+
+export type ChatAction = SceneAction & {
+  do: (state: GameState) => GameState;
   flash?: boolean;
+};
+
+export type OptionsAction = SceneAction & {
+  do?: (state: GameState) => GameState;
   pre?: (state?: GameState) => string;
+  flash?: boolean;
 };
 
 export type ChatSceneConfig = {
@@ -30,7 +40,7 @@ export type ChatSceneConfig = {
     bot: string;
     bg: string;
     preload: { text: string; isOwn: boolean; ts: number }[];
-    actions: SceneAction[];
+    actions: ChatAction[];
     waitMode?: string;
     nobodyHome?: boolean;
     enforceMode?: string[];
@@ -56,7 +66,7 @@ export type OptionsSceneConfig = {
   app: "options";
   config: {
     bg: string;
-    actions: SceneAction[];
+    actions: OptionsAction[];
     pre?: (state?: GameState) => string;
   };
 };
@@ -93,8 +103,10 @@ const scenes: SceneConfig = {
           do: set("scene", "policedesk"),
           label: "Go to the local police station",
         },
-        { do: set("scene", "bartender"), label: "Go to the bar" },
+        { do: set("scene", "bar"), label: "Go to the bar" },
         {
+          id: "apartmentgate",
+          locked: true,
           do: set("scene", "apartmentgate"),
           label: "Go to Jason's apartment",
         },
@@ -259,7 +271,7 @@ const scenes: SceneConfig = {
           label: "Knock on door for apartment 1A",
         },
         {
-          do: set("scene", "nobodyhome"),
+          do: set("scene", "neighbor2hall"),
           label: "Knock on door for apartment 1B",
         },
         {
@@ -393,16 +405,6 @@ const scenes: SceneConfig = {
           label: "Leave ⟶",
         },
         {
-          id: "notelandlord",
-          locked: true,
-          do: flow(
-            addItems("sceneUnlocks.payphone", ["landlord"]),
-            clearItems("sceneUnlocks.neighbor1hall", ["notelandlord"])
-          ),
-          label: "✍️ Write number down",
-          flash: true,
-        },
-        {
           id: "takekey",
           locked: true,
           do: flow(
@@ -410,6 +412,26 @@ const scenes: SceneConfig = {
             addItems("sceneUnlocks.apartmenthall", ["key3b"])
           ),
           label: "🔑 Take key",
+          flash: true,
+        },
+        {
+          id: "showwarrant",
+          locked: true,
+          do: flow(
+            clearItems("sceneUnlocks.neighbor1hall", ["showwarrant"]),
+            addItems("botStates.neighbor1", ["shownwarrant"])
+          ),
+          label: "🔑 Take key",
+          flash: true,
+        },
+        {
+          id: "notelandlord",
+          locked: true,
+          do: flow(
+            addItems("sceneUnlocks.payphone", ["landlord"]),
+            clearItems("sceneUnlocks.neighbor1hall", ["notelandlord"])
+          ),
+          label: "✍️ Write number down",
           flash: true,
         },
       ],
@@ -425,12 +447,34 @@ const scenes: SceneConfig = {
       ],
     },
   },
+  neighbor2hall: {
+    app: "chat",
+    config: {
+      bot: "neighbor2",
+      bg: apartmenthall,
+      waitMode: "Knocking...",
+      preload: [
+        {
+          text: "Who's there?",
+          isOwn: false,
+          ts: 0,
+        },
+      ],
+      actions: [
+        {
+          id: "leave",
+          do: set("scene", "apartmenthall"),
+          label: "Leave ⟶",
+        },
+      ],
+    },
+  },
   jasonsapartment: {
     app: "options",
     config: {
       bg: jasonsapartment,
       pre: () =>
-        `Air stale, curtains drawn, room shrouded in darkness. No signs of life for at least a week. Floorboards creak, musty scent of neglect hung in the air, and unease creeps over like a parasite.`,
+        `Air stale, curtains drawn, room shrouded in darkness. No signs of life for at least a week. No signs of *physical* struggle. Floorboards creak, musty scent of neglect hung in the air, and unease creeps over like a parasite.`,
       actions: [
         {
           do: set("scene", "jasonsbedroom"),
@@ -549,6 +593,38 @@ const scenes: SceneConfig = {
     },
   },
   // BAR
+  bar: {
+    app: "options",
+    config: {
+      bg: bar,
+      pre: () =>
+        `Air is thick and warm. Smells of alcohol and bleach. A couple huddles together in the corner. A woman sits alone at the bar, gaze distant, drink untouched. Bartender gives eye contact and a nod while drying off a glass.`,
+      actions: [
+        {
+          do: set("scene", "bartender"),
+          label: "Speak to the bartender",
+        },
+        {
+          do: set("scene", "barcouple"),
+          label: "Speak to the couple",
+        },
+        {
+          do: set("scene", "barwoman"),
+          label: "Speak to the woman",
+        },
+        {
+          id: "snoop",
+          locked: true,
+          do: set("scene", "barsnoop"),
+          label: "Snoop around the bar",
+        },
+        {
+          do: set("scene", "world"),
+          label: "Leave ⟶",
+        },
+      ],
+    },
+  },
   bartender: {
     app: "chat",
     config: {
@@ -564,10 +640,57 @@ const scenes: SceneConfig = {
       actions: [
         {
           id: "leave",
-          do: set("scene", "world"),
+          do: set("scene", "bar"),
           label: "Leave ⟶",
         },
       ],
+      stringMatches: [
+        {
+          match: "backdoor",
+          do: addItems("sceneUnlocks.bar", ["snoop"]),
+        },
+      ],
+    },
+  },
+  barsnoop: {
+    app: "options",
+    config: {
+      bg: bar,
+      pre: () =>
+        `Behind the bar is an alley way, partially lined with garbage cans, emanating a stench of decay. A door marked "Employees Only" sits ajar.`,
+      actions: [
+        {
+          pre: () =>
+            `It budges, with a bit of a struggle. Somebody did a number on it. You can't get in right now, not because it won't open, but because it's a complete void. Michael hasn't written this part of the game yet.`,
+          label: "Push open the door",
+        },
+        {
+          do: set("scene", "bar"),
+          label: "Leave ⟶",
+        },
+      ],
+    },
+  },
+  barwoman: {
+    app: "chat",
+    config: {
+      bot: "barwoman",
+      bg: barwoman,
+      preload: [],
+      actions: [
+        {
+          id: "leave",
+          do: set("scene", "bar"),
+          label: "Leave ⟶",
+        },
+      ],
+      on: {
+        kickedout: set("scene", ["world"]),
+        annoyed: set("botStates.barwoman", ["annoyed"]),
+        apprehensive: set("botStates.barwoman", ["apprehensive"]),
+        open: set("botStates.barwoman", ["open"]),
+        flirty: set("botStates.barwoman", ["flirty"]),
+      },
     },
   },
   // MOTEL
@@ -667,9 +790,19 @@ const scenes: SceneConfig = {
         {
           id: "frank",
           locked: true,
-          do: set("scene", "detective"),
+          do: flow(
+            addItems("sceneUnlocks.policedesk", ["frank2"]),
+            clearItems("sceneUnlocks.policedesk", ["frank"]),
+            set("scene", "detective")
+          ),
           label: "Take me to Frank ⟶",
           flash: true,
+        },
+        {
+          id: "frank2",
+          locked: true,
+          do: set("scene", "detective"),
+          label: "Take me to Frank ⟶",
         },
       ],
       on: {
@@ -696,6 +829,16 @@ const scenes: SceneConfig = {
           label: "Leave ⟶",
         },
         {
+          id: "takewarrant",
+          locked: true,
+          do: flow(
+            addItems("sceneUnlocks.neighbor1hall", ["takewarrant"]),
+            clearItems("sceneUnlocks.detective", ["takewarrant"])
+          ),
+          label: "📄 Take copy of warrant",
+          flash: true,
+        },
+        {
           id: "notelandlord",
           locked: true,
           do: flow(
@@ -718,6 +861,7 @@ const scenes: SceneConfig = {
       ],
       on: {
         arrest: set("scene", "arrested"),
+        grantwarrant: addItems("sceneUnlocks.detective", ["takewarrant"]),
       },
       stringMatches: [
         {

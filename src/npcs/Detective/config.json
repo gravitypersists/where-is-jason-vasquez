@@ -14,7 +14,8 @@
     "self": "Frank doesn't want to talk about himself and is annoyed that somebody is poking around his business.",
     "murder": "There haven't been any murders in Sunset Bluffs for a long time. Frank doubts there were any recent murders.",
     "hospital": "Frank did not check the local hospital but will respect my investigative skills if I ask if Jason was there, because it's a good idea.",
-    "landlord": "Frank had to get in touch with the landlord at Jason's apartments. The landlord's name is Hester or something and his phone number is 805-555-1498."
+    "landlord": "Frank had to get in touch with the landlord at Jason's apartments. The landlord's name is Hester or something and his phone number is 805-555-1498.",
+    "warrant": "Frank has a warrant to search Jason's house. If I ask for a  copy of the warrant, Frank can give me a copy of the warrant to Jason's home by saying 'Sure, here's a copy of the warrant.'"
   },
   "contexts": {
     "I'm looking into details about Jason Vasquez": ["jason"],
@@ -33,10 +34,13 @@
     "What are you wokring on?": ["case"],
     "Can you tell me about crime in the area?": ["currentjob", "case"],
     "Tell me about yourself": ["self"],
-    "Can you give me the landlord's contact info": ["landlord"]
+    "Can you give me the landlord's contact info": ["landlord"],
+    "Is there a warrant for Jason's house": ["warrant"],
+    "Can I get the warrant?": ["warrant"]
   },
   "actions": {
     "You are under arrest": ["delay", "arrest"],
-    "I'm going to have to ask you to come with me.": ["delay", "arrest"]
+    "I'm going to have to ask you to come with me.": ["delay", "arrest"],
+    "Sure, here's a copy of the warrant.": ["grantwarrant"]
   }
 }

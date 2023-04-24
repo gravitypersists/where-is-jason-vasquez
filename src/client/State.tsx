@@ -14,11 +14,12 @@ export type GameState = {
 };
 
 const defaultState: GameState = {
-  scene: "start",
-  // scene: "world",
+  // scene: "start",
+  scene: "apartmenthall",
   botStates: {
     policedesk: ["disdain"],
     mother: ["intro"],
+    barwoman: ["apprehensive"],
   },
   sceneUnlocks: {},
   sceneLocks: {},

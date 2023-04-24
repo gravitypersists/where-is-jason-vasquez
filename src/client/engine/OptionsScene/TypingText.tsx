@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styled, { keyframes } from "styled-components";
+import styled, { css } from "styled-components";
 import { take } from "lodash";
 
 interface TypingTextProps {
@@ -14,15 +14,21 @@ const Container = styled.div`
   box-sizing: border-box;
 `;
 
-const StyledTypingText = styled.div`
-  display: inline-block;
-  overflow: hidden;
+const common = css`
+  white-space: pre-line;
+  font-family: "VT323", monospace;
+  margin: 0;
+`;
+
+const StyledTypingText = styled.pre`
   position: absolute;
+  ${common}
 `;
 
 // show hidden text to avoid layout shifts
-const HiddenText = styled.div`
+const HiddenText = styled.pre`
   visibility: hidden;
+  ${common}
 `;
 
 const getRandomTypingSpeed = (baseSpeed: number, variance: number) => {
@@ -39,14 +45,11 @@ const TypingText = ({
   className = "",
 }: TypingTextProps) => {
   const [visibleText, setVisibleText] = useState("");
-  console.log("render", text);
 
   useEffect(() => {
-    console.log("effect");
     const typeNextChar = () => {
       if (cache[text]) {
         setVisibleText(text);
-        console.log("cache hit");
         return;
       }
       if (visibleText.length < text.length) {

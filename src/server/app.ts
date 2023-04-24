@@ -17,6 +17,8 @@ const botPaths = {
   receptionist: "../npcs/Receptionist",
   landlord: "../npcs/Landlord",
   neighbor1: "../npcs/Neighbor1",
+  neighbor2: "../npcs/Neighbor2",
+  barwoman: "../npcs/BarWoman",
 };
 
 io.on("connection", (socket: Socket) => {
@@ -45,9 +47,11 @@ io.on("connection", (socket: Socket) => {
 
   socket.on(
     `send:${botName}:message`,
-    ({ message, ts }: { message: string; ts: number }) => {
+    ({ message, botModes }: { message: string; botModes: string[] }) => {
       console.log(`Received message: ${message}`);
       if (!message || message === "") throw new Error("Bad message");
+      console.log({ botModes });
+      bot.setModes(botModes);
       bot.respond(message).then((response) => {
         console.log("emitting bot message: ", response);
         io.emit(`emit:${botName}:message`, {
