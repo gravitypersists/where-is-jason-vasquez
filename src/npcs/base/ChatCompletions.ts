@@ -38,7 +38,7 @@ class OpenApiChatCompletions {
   private readonly apiUrl: string;
 
   constructor() {
-    this.apiKey = "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";
+    this.apiKey = process.env.OPENAI_API_KEY || "";
     this.apiUrl = "https://api.openai.com/v1/chat/completions";
   }
 

@@ -20,7 +20,7 @@ class Embeddings {
   private readonly model: string;
 
   constructor() {
-    this.apiKey = "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";
+    this.apiKey = process.env.OPENAI_API_KEY || "";
     this.apiUrl = "https://api.openai.com/v1/embeddings";
     this.model = "text-embedding-ada-002";
   }
